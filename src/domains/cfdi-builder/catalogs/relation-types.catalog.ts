@@ -12,8 +12,6 @@ export const RELATION_TYPES: Record<string, string> = {
   '05': 'Traslados de mercancias facturados previamente',
   '06': 'Factura generada por los traslados previos',
   '07': 'CFDI por aplicación de anticipos',
-  '08': 'Facturas generadas por pagos en parcialidades',
-  '09': 'Factura generada por pagos diferidos',
 };
 
 // Verifica si un tipo de relación es válido
