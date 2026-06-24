@@ -11,8 +11,8 @@ function buildConceptTaxesXml(concept: IConcept): string {
     let transfers = '';
     let retentions = '';
 
-    for (let i = 0; i < concept.taxes.length; i++) {
-        const tax = concept.taxes[i];
+    for (let taxIndex = 0; taxIndex < concept.taxes.length; taxIndex++) {
+        const tax = concept.taxes[taxIndex];
         const amount = round2(base * tax.rate);
 
         if (tax.withholding) {
@@ -33,8 +33,8 @@ function buildConceptTaxesXml(concept: IConcept): string {
 export function buildConceptsXml(concepts: IConcept[]): string {
     let items = '';
 
-    for (let i = 0; i < concepts.length; i++) {
-        const concept = concepts[i];
+    for (let conceptIndex = 0; conceptIndex < concepts.length; conceptIndex++) {
+        const concept = concepts[conceptIndex];
         const amount = round2(concept.unitPrice * concept.quantity);
         items += `<cfdi:Concepto ClaveProdServ="${concept.productKey}" ClaveUnidad="${concept.unitKey}" Descripcion="${xmlEscape(concept.description)}" ValorUnitario="${concept.unitPrice}" Cantidad="${concept.quantity}" Importe="${amount}">${buildConceptTaxesXml(concept)}</cfdi:Concepto>`;
     }
