@@ -4,9 +4,10 @@
 import { IInvoiceRequest } from '../requests/invoice.request';
 import { ICreditNoteRequest } from '../requests/credit-note.request';
 import { IPaymentRequest } from '../requests/payment.request';
+import { IResponse } from '../../../shared/models/response.model';
 
 // Orquesta la construcción de un CFDI de Ingreso
-export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<string> {
+export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IResponse> {
   try {
     // 1. NORMALIZAR
     // TODO: normalize(payload)
@@ -20,14 +21,14 @@ export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<string
     // 4. GENERAR XML
     // TODO: generateXml(document)
 
-    return '<cfdi:Comprobante/>'; // placeholder hasta completar las fases
+    return { ok: true, data: '<cfdi:Comprobante/>' }; // placeholder hasta completar las fases
   } catch (error: any) {
-    throw new Error(error.message || 'Error al construir el CFDI de Ingreso');
+    return { ok: false, message: error.message || 'Error al construir el CFDI de Ingreso' };
   }
 }
 
 // Orquesta la construcción de un CFDI de Egreso
-export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<string> {
+export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<IResponse> {
   try {
     // 1. NORMALIZAR
     // TODO: normalize(payload)
@@ -41,14 +42,14 @@ export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<
     // 4. GENERAR XML
     // TODO: generateXml(document)
 
-    return '<cfdi:Comprobante/>'; // placeholder hasta completar las fases
+    return { ok: true, data: '<cfdi:Comprobante/>' }; // placeholder hasta completar las fases
   } catch (error: any) {
-    throw new Error(error.message || 'Error al construir el CFDI de Egreso');
+    return { ok: false, message: error.message || 'Error al construir el CFDI de Egreso' };
   }
 }
 
 // Orquesta la construcción de un CFDI de Pago
-export async function buildPaymentServ(payload: IPaymentRequest): Promise<string> {
+export async function buildPaymentServ(payload: IPaymentRequest): Promise<IResponse> {
   try {
     // 1. NORMALIZAR
     // TODO: normalize(payload)
@@ -62,8 +63,8 @@ export async function buildPaymentServ(payload: IPaymentRequest): Promise<string
     // 4. GENERAR XML
     // TODO: generateXml(document)
 
-    return '<cfdi:Comprobante/>'; // placeholder hasta completar las fases
+    return { ok: true, data: '<cfdi:Comprobante/>' }; // placeholder hasta completar las fases
   } catch (error: any) {
-    throw new Error(error.message || 'Error al construir el CFDI de Pago');
+    return { ok: false, message: error.message || 'Error al construir el CFDI de Pago' };
   }
 }
