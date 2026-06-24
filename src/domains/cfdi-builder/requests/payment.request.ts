@@ -10,7 +10,7 @@ export interface IRelatedDocument {
   installmentNumber: number; // Número de parcialidad
   previousBalance: number;   // Saldo anterior
   amountPaid: number;        // Importe pagado
-  remainingBalance: number;  // Saldo insoluto
+  remainingBalance: number;  // Saldo restante después del pago
 }
 
 // Pago individual
