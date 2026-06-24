@@ -14,14 +14,14 @@ export function buildTaxesXml(concepts: IConcept[]): string {
     let retentionsXml = '';   // XML de retenciones
 
     // Recorre cada concepto y acumula sus impuestos
-    for (let i = 0; i < concepts.length; i++) {
+    for (let conceptIndex = 0; conceptIndex < concepts.length; conceptIndex++) {
 
-        const concept = concepts[i];
+        const concept = concepts[conceptIndex];
         const base = round2(concept.unitPrice * concept.quantity);
 
-        for (let j = 0; j < concept.taxes.length; j++) {
+        for (let taxIndex = 0; taxIndex < concept.taxes.length; taxIndex++) {
 
-            const tax = concept.taxes[j];
+            const tax = concept.taxes[taxIndex];
             const amount = round2(base * tax.rate);
 
             if (tax.withholding) {
