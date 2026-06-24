@@ -2,8 +2,10 @@
 // PAYMENT COMPLEMENT VALIDATOR
 // ================================
 import { IPayment } from '../requests/payment.request';
+import { round2 } from '../utils/round2.util';
 
-export function validatePaymentComplement(payments: IPayment[]): void { // Valida los pagos del complemento — solo aplica para Pago (P)
+// Valida los pagos del complemento — solo aplica para Pago (P)
+export function validatePaymentComplement(payments: IPayment[]): void {
 
     // Debe haber al menos un pago
     if (payments.length === 0) {
@@ -45,10 +47,10 @@ export function validatePaymentComplement(payments: IPayment[]): void { // Valid
                 throw new Error(`El documento ${docNumber} del pago ${paymentNumber} tiene un saldo negativo`);
             }
 
-            // Validación simple de cálculo del saldo
-            const expected = doc.previousBalance - doc.amountPaid;
+            // Se usa round2 en ambos lados para evitar errores de precisión decimal en TypeScript
+            const expected = round2(doc.previousBalance - doc.amountPaid);
 
-            if (expected !== doc.remainingBalance) {
+            if (expected !== round2(doc.remainingBalance)) {
                 throw new Error(
                     `El documento ${docNumber} del pago ${paymentNumber} no cuadra: esperado ${expected}, recibido ${doc.remainingBalance}`
                 );
