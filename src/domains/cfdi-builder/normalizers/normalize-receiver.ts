@@ -12,11 +12,20 @@ export function normalizeReceiver(receiver: IReceiver): IReceiver {
   // RFC genérico de público en general
   const isGeneric = rfc === 'XAXX010101000';
 
+  let taxRegime = receiver.taxRegime.trim();
+  let cfdiUse = receiver.cfdiUse.trim();
+
+  // Si el RFC es genérico, se asignan valores por defecto
+  if (isGeneric) {
+    taxRegime = '616';
+    cfdiUse = 'S01';
+  }
+
   return {
     rfc,
     name: receiver.name.trim().toUpperCase(),
     zipCode: receiver.zipCode.trim(),
-    taxRegime: isGeneric ? '616' : receiver.taxRegime.trim(),
-    cfdiUse: isGeneric ? 'S01' : receiver.cfdiUse.trim(),
+    taxRegime,
+    cfdiUse,
   };
 }

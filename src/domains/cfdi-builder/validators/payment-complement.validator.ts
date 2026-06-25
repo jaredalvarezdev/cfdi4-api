@@ -12,10 +12,10 @@ export function validatePaymentComplement(payments: IPayment[]): void {
         throw new Error('El complemento de pago debe tener al menos un pago');
     }
 
-    for (let i = 0; i < payments.length; i++) {
+    for (let paymentIndex = 0; paymentIndex < payments.length; paymentIndex++) {
 
-        const payment = payments[i];
-        const paymentNumber = i + 1;
+        const payment = payments[paymentIndex];
+        const paymentNumber = paymentIndex + 1;
 
         // El monto del pago debe ser mayor a 0
         if (payment.amount <= 0) {
@@ -27,10 +27,10 @@ export function validatePaymentComplement(payments: IPayment[]): void {
             throw new Error(`El pago ${paymentNumber} no tiene documentos relacionados`);
         }
 
-        for (let j = 0; j < payment.relatedDocuments.length; j++) {
+        for (let docIndex = 0; docIndex < payment.relatedDocuments.length; docIndex++) {
 
-            const doc = payment.relatedDocuments[j];
-            const docNumber = j + 1;
+            const doc = payment.relatedDocuments[docIndex];
+            const docNumber = docIndex + 1;
 
             // El saldo anterior debe ser mayor a 0
             if (doc.previousBalance <= 0) {

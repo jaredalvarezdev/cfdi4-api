@@ -13,34 +13,34 @@ export function validateConcepts(concepts: IConcept[]): void {
     }
 
     // Recorre cada concepto y valida sus datos
-    for (let i = 0; i < concepts.length; i++) {
+    for (let conceptIndex = 0; conceptIndex < concepts.length; conceptIndex++) {
 
-        const concept = concepts[i];
-        const numero = i + 1;
+        const concept = concepts[conceptIndex];
+        const conceptNumber = conceptIndex + 1;
 
         // La cantidad debe ser mayor a 0
         if (concept.quantity <= 0) {
-            throw new Error(`El concepto ${numero} tiene una cantidad inválida`);
+            throw new Error(`El concepto ${conceptNumber} tiene una cantidad inválida`);
         }
 
         // El valor unitario debe ser mayor a 0
         if (concept.unitPrice <= 0) {
-            throw new Error(`El concepto ${numero} tiene un valor unitario inválido`);
+            throw new Error(`El concepto ${conceptNumber} tiene un valor unitario inválido`);
         }
 
         // La clave del producto no puede estar vacía
         if (!concept.productKey) {
-            throw new Error(`El concepto ${numero} no tiene clave de producto SAT`);
+            throw new Error(`El concepto ${conceptNumber} no tiene clave de producto SAT`);
         }
 
         // La clave de unidad no puede estar vacía
         if (!concept.unitKey) {
-            throw new Error(`El concepto ${numero} no tiene clave de unidad SAT`);
+            throw new Error(`El concepto ${conceptNumber} no tiene clave de unidad SAT`);
         }
 
         // La descripción no puede estar vacía
         if (!concept.description) {
-            throw new Error(`El concepto ${numero} no tiene descripción`);
+            throw new Error(`El concepto ${conceptNumber} no tiene descripción`);
         }
     }
 }
