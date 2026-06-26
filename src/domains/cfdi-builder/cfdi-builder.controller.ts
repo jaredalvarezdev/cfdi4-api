@@ -11,19 +11,42 @@ import { IPaymentRequest } from './requests/payment.request';
 export const buildInvoiceCtrl = async (req: Request, res: Response): Promise<void> => {
   const data = req.body as IInvoiceRequest;
   const result = await buildInvoiceServ(data);
-  res.json(result);
+
+  // Si hubo un error de validación, responde con status 400 y el mensaje
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+
+  // Si todo salió bien, responde con el XML
+  res.setHeader('Content-Type', 'application/xml');
+  res.send(result.data as string);
 };
 
 // Construye un CFDI de Egreso
 export const buildCreditNoteCtrl = async (req: Request, res: Response): Promise<void> => {
   const data = req.body as ICreditNoteRequest;
   const result = await buildCreditNoteServ(data);
-  res.json(result);
+
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+
+  res.setHeader('Content-Type', 'application/xml');
+  res.send(result.data as string);
 };
 
 // Construye un CFDI de Pago
 export const buildPaymentCtrl = async (req: Request, res: Response): Promise<void> => {
   const data = req.body as IPaymentRequest;
   const result = await buildPaymentServ(data);
-  res.json(result);
+
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+
+  res.setHeader('Content-Type', 'application/xml');
+  res.send(result.data as string);
 };
