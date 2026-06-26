@@ -7,6 +7,7 @@ import { IConceptTax } from '../requests/invoice.request';
 export function normalizeTaxes(taxes: IConceptTax[]): IConceptTax[] {
   return taxes.map((tax) => {
 
+    const type = tax.type.trim().toUpperCase();
     let rate = tax.rate;
 
     // Si la tasa viene como entero (ej. 16), se convierte a decimal (0.16)
@@ -14,10 +15,10 @@ export function normalizeTaxes(taxes: IConceptTax[]): IConceptTax[] {
       rate = tax.rate / 100;
     }
 
-    return {
-      type: tax.type.trim().toUpperCase(),
-      rate,
-      withholding: tax.withholding,
+    return { 
+      type, 
+      rate, 
+      withholding: tax.withholding 
     };
   });
 }
