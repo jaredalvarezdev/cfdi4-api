@@ -7,8 +7,8 @@ import { round2 } from '../../utils/round2.util';
 // Genera el complemento de pagos 2.0 — solo aplica para Pago (P)
 export function buildPayments20Xml(payments: IPayment[]): string {
 
-    let totales = 0;      // Total de todos los pagos
-    let pagosXml = '';    // XML de cada pago
+    let totales = 0;   // Total acumulado de todos los pagos
+    let pagosXml = ''; // XML de cada pago
 
     for (let paymentIndex = 0; paymentIndex < payments.length; paymentIndex++) {
 
@@ -21,7 +21,7 @@ export function buildPayments20Xml(payments: IPayment[]): string {
 
             const doc = payment.relatedDocuments[docIndex];
 
-            docsXml += `<pago20:DoctoRelacionado IdDocumento="${doc.uuid}" MetodoDePagoDR="${doc.paymentMethod}" NominalDR="${doc.previousBalance}" EquivalenciaDR="1" NumParcialidad="${doc.installmentNumber}" ImpSaldoAnt="${doc.previousBalance}" ImpPagado="${doc.amountPaid}" ImpSaldoInsoluto="${doc.remainingBalance}" MonedaDR="MXN"/>`;
+            docsXml += `<pago20:DoctoRelacionado IdDocumento="${doc.uuid}" MonedaDR="MXN" EquivalenciaDR="1" NumParcialidad="${doc.installmentNumber}" ImpSaldoAnt="${doc.previousBalance}" ImpPagado="${doc.amountPaid}" ImpSaldoInsoluto="${doc.remainingBalance}" MetodoDePagoDR="${doc.paymentMethod}"/>`;
         }
 
         pagosXml += `<pago20:Pago FechaPago="${payment.paymentDate}" FormaDePagoP="${payment.paymentForm}" MonedaP="${payment.currency}" Monto="${payment.amount}">${docsXml}</pago20:Pago>`;
