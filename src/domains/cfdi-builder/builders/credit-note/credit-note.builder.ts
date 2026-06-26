@@ -15,7 +15,7 @@ export function buildCreditNote(payload: ICreditNoteRequest) {
 
     // Impuestos trasladados — suma de impuestos de cada concepto (sin retenciones)
     const taxAmount = round2(
-        payload.concepts.reduce((sum, concept) => { // Se utuliza reduce para iterar sobre cada concepto y calcular el total de impuestos trasladados
+        payload.concepts.reduce((sum, concept) => {
             const base = round2(concept.unitPrice * concept.quantity);
             const conceptTaxes = concept.taxes
                 .filter((tax) => !tax.withholding)

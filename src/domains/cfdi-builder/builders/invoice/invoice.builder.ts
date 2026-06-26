@@ -4,7 +4,6 @@
 import { IInvoiceRequest } from '../../requests/invoice.request';
 import { round2 } from '../../utils/round2.util';
 
-//Funcion para construir la factura a partir del payload recibido
 export function buildInvoice(payload: IInvoiceRequest) {
 
     // Subtotal — suma de unitPrice × quantity de cada concepto
