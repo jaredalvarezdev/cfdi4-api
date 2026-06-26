@@ -5,25 +5,21 @@ import { IInvoiceRequest } from '../requests/invoice.request';
 import { ICreditNoteRequest } from '../requests/credit-note.request';
 import { IPaymentRequest } from '../requests/payment.request';
 import { IResponse } from '../../../shared/models/response.model';
-
 import { normalizeIssuer } from '../normalizers/normalize-issuer';
 import { normalizeReceiver } from '../normalizers/normalize-receiver';
 import { normalizeConcepts } from '../normalizers/normalize-concepts';
 import { normalizePayments } from '../normalizers/normalize-payments';
-
+import { normalizeTaxes } from '../normalizers/normalize-taxes';
+import { normalizeRelatedCfdi } from '../normalizers/normalize-related';
 import { validateGeneral } from '../validators/general.validator';
 import { validateConcepts } from '../validators/concepts.validator';
 import { validateTaxes } from '../validators/taxes.validator';
 import { validateRelatedCfdi } from '../validators/related-cfdi.validator';
 import { validatePaymentComplement } from '../validators/payment-complement.validator';
-
 import { buildInvoice } from '../builders/invoice/invoice.builder';
 import { buildCreditNote } from '../builders/credit-note/credit-note.builder';
 import { buildPayment } from '../builders/payment/payment.builder';
-
-import { generateInvoiceXml } from '../xml/xml-generator';
-import { generateCreditNoteXml } from '../xml/xml-generator';
-import { generatePaymentXml } from '../xml/xml-generator';
+import { generateInvoiceXml, generateCreditNoteXml, generatePaymentXml } from '../xml/xml-generator';
 
 // Orquesta la construcción de un CFDI de Ingreso
 export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IResponse> {
@@ -32,6 +28,10 @@ export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IRespo
     payload.issuer = normalizeIssuer(payload.issuer);
     payload.receiver = normalizeReceiver(payload.receiver);
     payload.concepts = normalizeConcepts(payload.concepts);
+
+    for (let conceptIndex = 0; conceptIndex < payload.concepts.length; conceptIndex++) {
+      payload.concepts[conceptIndex].taxes = normalizeTaxes(payload.concepts[conceptIndex].taxes);
+    }
 
     // 2. VALIDAR
     validateGeneral(payload);
@@ -60,6 +60,11 @@ export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<
     payload.issuer = normalizeIssuer(payload.issuer);
     payload.receiver = normalizeReceiver(payload.receiver);
     payload.concepts = normalizeConcepts(payload.concepts);
+    payload.relatedCfdi = normalizeRelatedCfdi(payload.relatedCfdi);
+
+    for (let conceptIndex = 0; conceptIndex < payload.concepts.length; conceptIndex++) {
+      payload.concepts[conceptIndex].taxes = normalizeTaxes(payload.concepts[conceptIndex].taxes);
+    }
 
     // 2. VALIDAR
     validateGeneral(payload);
@@ -96,7 +101,7 @@ export async function buildPaymentServ(payload: IPaymentRequest): Promise<IRespo
     validatePaymentComplement(payload.payments);
 
     // 3. CONSTRUIR
-    buildPayment(payload);
+    const document = buildPayment(payload);
 
     // 4. GENERAR XML
     const xml = generatePaymentXml(payload);
