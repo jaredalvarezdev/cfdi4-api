@@ -3,29 +3,39 @@
 // ================================
 import { IReceiver } from '../requests/invoice.request';
 
-// Limpia y completa los datos del receptor
-// Si el RFC es el genérico de público en general,
-// completa automáticamente taxRegime y cfdiUse
-export function normalizeReceiver(receiver: IReceiver): IReceiver {
-  const rfc = receiver.rfc.trim().toUpperCase();
+// Limpia y estandariza los datos del receptor antes de construir el XML
+export function normalizeReceiver(receiver: IReceiver, type: 'I' | 'E' | 'P' = 'I'): IReceiver {
 
-  // RFC genérico de público en general
-  const isGeneric = rfc === 'XAXX010101000';
+    const rfc = receiver.rfc.trim().toUpperCase();
+    const name = receiver.name.trim().toUpperCase();
+    const zipCode = receiver.zipCode.trim();
 
-  let taxRegime = receiver.taxRegime.trim();
-  let cfdiUse = receiver.cfdiUse.trim();
+    let taxRegime = receiver.taxRegime.trim();
+    let cfdiUse = receiver.cfdiUse.trim().toUpperCase();
 
-  // Si el RFC es genérico, se asignan valores por defecto
-  if (isGeneric) {
-    taxRegime = '616';
-    cfdiUse = 'S01';
-  }
+    // RFC genérico de público en general
+    const isGeneric = rfc === 'XAXX010101000';
 
-  return {
-    rfc,
-    name: receiver.name.trim().toUpperCase(),
-    zipCode: receiver.zipCode.trim(),
-    taxRegime,
-    cfdiUse,
-  };
+    // RFC genérico de extranjero
+    const isForeign = rfc === 'XEXX010101000';
+
+    // Para RFC genéricos el SAT obliga valores fijos según el tipo de CFDI
+    if (isGeneric || isForeign) {
+        taxRegime = '616';
+
+        // Pago siempre usa CP01, Ingreso y Egreso usan S01
+        if (type === 'P') {
+            cfdiUse = 'CP01';
+        } else {
+            cfdiUse = 'S01';
+        }
+    }
+
+    return {
+        rfc,
+        name,
+        zipCode,
+        taxRegime,
+        cfdiUse,
+    };
 }
