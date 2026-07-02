@@ -26,7 +26,7 @@ export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IRespo
   try {
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
-    payload.receiver = normalizeReceiver(payload.receiver);
+    payload.receiver = normalizeReceiver(payload.receiver, 'I');
     payload.concepts = normalizeConcepts(payload.concepts);
 
     for (let conceptIndex = 0; conceptIndex < payload.concepts.length; conceptIndex++) {
@@ -58,7 +58,7 @@ export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<
   try {
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
-    payload.receiver = normalizeReceiver(payload.receiver);
+    payload.receiver = normalizeReceiver(payload.receiver, 'E');
     payload.concepts = normalizeConcepts(payload.concepts);
     payload.relatedCfdi = normalizeRelatedCfdi(payload.relatedCfdi);
 
