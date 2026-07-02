@@ -93,7 +93,7 @@ export async function buildPaymentServ(payload: IPaymentRequest): Promise<IRespo
   try {
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
-    payload.receiver = normalizeReceiver(payload.receiver);
+    payload.receiver = normalizeReceiver(payload.receiver, 'P');
     payload.payments = normalizePayments(payload.payments);
 
     // 2. VALIDAR
