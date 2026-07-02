@@ -13,6 +13,12 @@ import { IPaymentRequest } from '../requests/payment.request';
 // Formato de RFC válido según el SAT, incluyendo los genéricos para público en general y extranjero
 const RFC_REGEX = /^([A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}|XAXX010101000|XEXX010101000)$/;
 
+export function validateDocumentType(payloadType: string | undefined,expectedType: 'I' | 'E' | 'P'): void {
+  if (payloadType !== undefined && payloadType !== expectedType) {
+    throw new Error(`El campo "type" ("${payloadType}") no coincide con la ruta usada. Se esperaba "type": "${expectedType}".`);
+  }
+}
+
 export function validateGeneral(
   payload: IInvoiceRequest | ICreditNoteRequest | IPaymentRequest
 ): void {

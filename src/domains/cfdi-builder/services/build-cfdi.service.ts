@@ -11,7 +11,7 @@ import { normalizeConcepts } from '../normalizers/normalize-concepts';
 import { normalizePayments } from '../normalizers/normalize-payments';
 import { normalizeTaxes } from '../normalizers/normalize-taxes';
 import { normalizeRelatedCfdi } from '../normalizers/normalize-related';
-import { validateGeneral } from '../validators/general.validator';
+import { validateDocumentType, validateGeneral } from '../validators/general.validator';
 import { validateConcepts } from '../validators/concepts.validator';
 import { validateTaxes } from '../validators/taxes.validator';
 import { validateRelatedCfdi } from '../validators/related-cfdi.validator';
@@ -24,6 +24,11 @@ import { generateInvoiceXml, generateCreditNoteXml, generatePaymentXml } from '.
 // Orquesta la construcción de un CFDI de Ingreso
 export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IResponse> {
   try {
+
+    // 0. VALIDAR QUE EL TIPO DE DOCUMENTO SEA EL CORRECTO
+    validateDocumentType(payload.type, 'I');
+    payload.type = 'I';
+
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
     payload.receiver = normalizeReceiver(payload.receiver, 'I');
@@ -56,6 +61,11 @@ export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IRespo
 // Orquesta la construcción de un CFDI de Egreso
 export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<IResponse> {
   try {
+
+    // 0. VALIDAR QUE EL TIPO DE DOCUMENTO SEA EL CORRECTO
+    validateDocumentType(payload.type, 'E');
+    payload.type = 'E';
+
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
     payload.receiver = normalizeReceiver(payload.receiver, 'E');
@@ -91,6 +101,11 @@ export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<
 // Orquesta la construcción de un CFDI de Pago
 export async function buildPaymentServ(payload: IPaymentRequest): Promise<IResponse> {
   try {
+
+    // 0. VALIDAR QUE EL TIPO DE DOCUMENTO SEA EL CORRECTO
+    validateDocumentType(payload.type, 'P');
+    payload.type = 'P';
+    
     // 1. NORMALIZAR
     payload.issuer = normalizeIssuer(payload.issuer);
     payload.receiver = normalizeReceiver(payload.receiver, 'P');
