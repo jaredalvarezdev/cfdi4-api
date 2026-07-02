@@ -36,7 +36,17 @@ export function buildConceptsXml(concepts: IConcept[]): string {
     for (let conceptIndex = 0; conceptIndex < concepts.length; conceptIndex++) {
         const concept = concepts[conceptIndex];
         const amount = round2(concept.unitPrice * concept.quantity);
-        items += `<cfdi:Concepto ClaveProdServ="${concept.productKey}" ClaveUnidad="${concept.unitKey}" Descripcion="${xmlEscape(concept.description)}" ValorUnitario="${concept.unitPrice}" Cantidad="${concept.quantity}" Importe="${amount}">${buildConceptTaxesXml(concept)}</cfdi:Concepto>`;
+
+        // ObjetoImp: 01 = No objeto de impuesto, 02 = Objeto de impuesto
+        let objetoImp = '01';
+        let taxesXml = '';
+
+        if (concept.taxes.length > 0) {
+            objetoImp = '02';
+            taxesXml = buildConceptTaxesXml(concept);
+        }
+
+        items += `<cfdi:Concepto ClaveProdServ="${concept.productKey}" ClaveUnidad="${concept.unitKey}" Descripcion="${xmlEscape(concept.description)}" ValorUnitario="${concept.unitPrice}" Cantidad="${concept.quantity}" Importe="${amount}" ObjetoImp="${objetoImp}">${taxesXml}</cfdi:Concepto>`;
     }
 
     return `<cfdi:Conceptos>${items}</cfdi:Conceptos>`;

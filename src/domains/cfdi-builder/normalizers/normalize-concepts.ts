@@ -8,21 +8,14 @@ import { IConcept } from '../requests/invoice.request';
 export function normalizeConcepts(concepts: IConcept[]): IConcept[] {
 
     return concepts.map((concept) => {
-
-        let taxes = concept.taxes;
-
-        // Si el concepto no trae impuestos, se asigna IVA 16% por defecto
-        if (concept.taxes.length === 0) {
-            taxes = [{ type: 'IVA', rate: 0.16, withholding: false }];
-        }
-
+        
         return {
             productKey: concept.productKey.trim(),
             unitKey: concept.unitKey.trim().toUpperCase(),
             description: concept.description.trim(),
             unitPrice: concept.unitPrice,
             quantity: concept.quantity,
-            taxes,
+            taxes: concept.taxes,
         };
     });
 }

@@ -37,5 +37,10 @@ export function validateConcepts(concepts: IConcept[]): void {
         if (!concept.description) {
             throw new Error(`El concepto ${conceptNumber} no tiene descripción`);
         }
+
+        // Valida que el campo taxes sea un arreglo, aunque esté vacío
+        if (!Array.isArray(concept.taxes)) {
+            throw new Error(`El concepto ${conceptNumber} debe incluir "taxes" como arreglo (usa [] si no aplica impuesto)`);
+        }
     }
 }
