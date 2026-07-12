@@ -1,9 +1,9 @@
 // ================================
 // CONCEPTS XML
 // ================================
-import { IConcept } from '../../requests/invoice.request';
-import { xmlEscape } from '../../utils/xml-escape.util';
-import { round2 } from '../../utils/round2.util';
+import { IConcept } from '../../../../shared/models/shared-cfdi.model';
+import { xmlEscape } from '../../../../shared/utils/xml-escape.util';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 function buildConceptTaxesXml(concept: IConcept): string {
     const base = round2(concept.unitPrice * concept.quantity);

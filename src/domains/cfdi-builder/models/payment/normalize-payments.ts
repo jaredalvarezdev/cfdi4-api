@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE PAYMENTS
 // ================================
-import { IPayment } from '../requests/payment.request';
+import { IPayment } from './payment.model';
 
 // Limpia y estandariza los pagos del complemento
 // Solo aplica para CFDI de tipo Pago (P)

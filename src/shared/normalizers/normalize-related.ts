@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE RELATED CFDI
 // ================================
-import { IRelatedCfdi } from '../requests/credit-note.request';
+import { IRelatedCfdi } from '../../domains/cfdi-builder/models/credit-note/credit-note.model';
 
 // Limpia y estandariza los datos del CFDI relacionado
 // antes de que pasen al validator

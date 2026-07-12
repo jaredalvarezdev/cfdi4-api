@@ -1,7 +1,7 @@
 // ================================
 // CONCEPTS VALIDATOR
 // ================================
-import { IConcept } from '../requests/invoice.request';
+import { IConcept } from '../models/shared-cfdi.model';
 
 // Valida que los conceptos de la factura sean correctos
 // antes de construir el XML

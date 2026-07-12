@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE RECEIVER
 // ================================
-import { IReceiver } from '../requests/invoice.request';
+import { IReceiver } from '../models/shared-cfdi.model';
 
 // Limpia y estandariza los datos del receptor antes de construir el XML
 export function normalizeReceiver(receiver: IReceiver, type: 'I' | 'E' | 'P' = 'I'): IReceiver {

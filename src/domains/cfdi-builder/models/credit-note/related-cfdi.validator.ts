@@ -2,8 +2,8 @@
 // RELATED CFDI VALIDATOR
 // ================================
 
-import { isValidRelationType } from '../catalogs/relation-types.catalog';
-import { IRelatedCfdi } from '../requests/credit-note.request';
+import { isValidRelationType } from '../../../../shared/catalogs/relation-types.catalog';
+import { IRelatedCfdi } from './credit-note.model';
 
 const UUID_REGEX =/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 

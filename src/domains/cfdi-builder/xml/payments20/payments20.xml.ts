@@ -1,8 +1,8 @@
 // ================================
 // PAYMENTS20 XML
 // ================================
-import { IPayment } from '../../requests/payment.request';
-import { round2 } from '../../utils/round2.util';
+import { IPayment } from '../../models/payment/payment.model';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 // Genera el complemento de pagos 2.0 — solo aplica para Pago (P)
 export function buildPayments20Xml(payments: IPayment[]): string {

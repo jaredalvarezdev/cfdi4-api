@@ -1,8 +1,8 @@
 // ================================
 // CREDIT NOTE BUILDER
 // ================================
-import { ICreditNoteRequest } from '../../requests/credit-note.request';
-import { round2 } from '../../utils/round2.util';
+import { ICreditNoteRequest } from './credit-note.model';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 export function buildCreditNote(payload: ICreditNoteRequest) {
 

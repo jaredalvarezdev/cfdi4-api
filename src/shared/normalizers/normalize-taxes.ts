@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE TAXES
 // ================================
-import { IConceptTax } from '../requests/invoice.request';
+import { IConceptTax } from '../models/shared-cfdi.model';
 
 // Limpia y estandariza los impuestos de cada concepto
 export function normalizeTaxes(taxes: IConceptTax[]): IConceptTax[] {

@@ -1,10 +1,10 @@
 // ================================
 // PAYMENT COMPLEMENT VALIDATOR
 // ================================
-import { IPayment } from '../requests/payment.request';
-import { round2 } from '../utils/round2.util';
-import { isValidPaymentForm } from '../catalogs/payment-forms.catalog';
-import { isValidCurrency } from '../catalogs/currencies.catalog';
+import { IPayment } from './payment.model';
+import { round2 } from '../../../../shared/utils/round2.util';
+import { isValidPaymentForm } from '../../../../shared/catalogs/payment-forms.catalog';
+import { isValidCurrency } from '../../../../shared/catalogs/currencies.catalog';
 
 // Formato de fecha ISO 8601 — ejemplo: 2024-01-15T10:30:00
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;

@@ -1,7 +1,7 @@
 // ================================
 // PAYMENT REQUEST
 // ================================
-import { IIssuer, IReceiver } from './invoice.request';
+import { IIssuer, IReceiver } from '../../../../shared/models/shared-cfdi.model';
 
 // Documento relacionado al pago
 export interface IRelatedDocument {

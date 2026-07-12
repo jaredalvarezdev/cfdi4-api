@@ -1,7 +1,7 @@
 // ================================
 // TAXES VALIDATOR
 // ================================
-import { IConceptTax } from '../requests/invoice.request';
+import { IConceptTax } from '../models/shared-cfdi.model';
 
 const VALID_IVA_RATES = [0, 0.08, 0.16];        // Tasas válidas de IVA según el SAT
 const VALID_ISR_RATES = [0.1, 0.1125];          // Tasas válidas de ISR según el SAT

@@ -1,9 +1,9 @@
 // ================================
 // XML GENERATOR
 // ================================
-import { IInvoiceRequest } from '../requests/invoice.request';
-import { ICreditNoteRequest } from '../requests/credit-note.request';
-import { IPaymentRequest } from '../requests/payment.request';
+import { IInvoiceRequest } from '../models/invoice/invoice.model';
+import { ICreditNoteRequest } from '../models/credit-note/credit-note.model';
+import { IPaymentRequest } from '../models/payment/payment.model';
 import { buildVoucherXml } from './voucher/voucher.xml';
 import { buildIssuerXml } from './issuer/issuer.xml';
 import { buildReceiverXml } from './receiver/receiver.xml';

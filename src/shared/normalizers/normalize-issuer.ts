@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE ISSUER
 // ================================
-import { IIssuer } from '../requests/invoice.request';
+import { IIssuer } from '../models/shared-cfdi.model';
 
 // Limpia y estandariza los datos del emisor
 // antes de que pasen al validator

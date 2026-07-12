@@ -1,5 +1,6 @@
 // ================================
-// INVOICE REQUEST
+// SHARED CFDI MODELS
+// Interfaces reutilizadas por los 3 tipos de comprobante (ingreso, egreso, pago)
 // ================================
 
 // Emisor del CFDI
@@ -33,16 +34,4 @@ export interface IConcept {
   unitPrice: number;    // Valor unitario
   quantity: number;     // Cantidad
   taxes: IConceptTax[];
-}
-
-// Request principal — Ingreso
-export interface IInvoiceRequest {
-  type: 'I';
-  issuer: IIssuer;
-  receiver: IReceiver;
-  concepts: IConcept[];
-  paymentForm: string;       // Forma de pago — c_FormaPago
-  paymentMethod: string;     // Método de pago — PUE o PPD
-  currency: string;          // Moneda — c_Moneda
-  expeditionZipCode: string;
 }

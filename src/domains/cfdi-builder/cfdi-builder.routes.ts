@@ -2,11 +2,9 @@
 // CFDI BUILDER ROUTES
 // ================================
 import { Router } from 'express';
-import {
-  buildInvoiceCtrl,
-  buildCreditNoteCtrl,
-  buildPaymentCtrl,
-} from './cfdi-builder.controller';
+import { buildInvoiceCtrl } from './models/invoice/invoice.controller';
+import { buildCreditNoteCtrl } from './models/credit-note/credit-note.controller';
+import { buildPaymentCtrl } from './models/payment/payment.controller';
 
 const router = Router();
 

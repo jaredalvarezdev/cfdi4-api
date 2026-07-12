@@ -1,7 +1,7 @@
 // ================================
 // CREDIT NOTE REQUEST
 // ================================
-import { IIssuer, IReceiver, IConcept } from './invoice.request';
+import { IIssuer, IReceiver, IConcept } from '../../../../shared/models/shared-cfdi.model';
 
 // CFDI relacionado — obligatorio en Egreso
 export interface IRelatedCfdi {

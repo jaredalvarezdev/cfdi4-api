@@ -1,7 +1,7 @@
 // ================================
 // NORMALIZE CONCEPTS
 // ================================
-import { IConcept } from '../requests/invoice.request';
+import { IConcept } from '../models/shared-cfdi.model';
 
 // Limpia y completa los conceptos de la factura
 // Si un concepto no trae impuestos, se asigna IVA 16% por defecto

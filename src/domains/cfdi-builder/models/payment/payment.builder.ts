@@ -1,8 +1,8 @@
 // ================================
 // PAYMENT BUILDER
 // ================================
-import { IPaymentRequest } from '../../requests/payment.request';
-import { round2 } from '../../utils/round2.util';
+import { IPaymentRequest } from './payment.model';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 // Construye un objeto de tipo IPaymentRequest a partir de los datos proporcionados en el payload
 export function buildPayment(payload: IPaymentRequest) {

@@ -1,8 +1,8 @@
 // ================================
 // TAXES XML
 // ================================
-import { IConcept } from '../../requests/invoice.request';
-import { round2 } from '../../utils/round2.util';
+import { IConcept } from '../../../../shared/models/shared-cfdi.model';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 // Genera el bloque de impuestos globales del CFDI
 // Los traslados se consolidan por tipo+tasa como requiere el SAT

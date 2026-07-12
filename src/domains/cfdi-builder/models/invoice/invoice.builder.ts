@@ -1,8 +1,8 @@
 // ================================
 // INVOICE BUILDER
 // ================================
-import { IInvoiceRequest } from '../../requests/invoice.request';
-import { round2 } from '../../utils/round2.util';
+import { IInvoiceRequest } from './invoice.model';
+import { round2 } from '../../../../shared/utils/round2.util';
 
 export function buildInvoice(payload: IInvoiceRequest) {
 

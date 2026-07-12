@@ -6,9 +6,9 @@ import { isValidCurrency } from '../catalogs/currencies.catalog';
 import { isValidPaymentMethod } from '../catalogs/payment-methods.catalog';
 import { isValidTaxRegime } from '../catalogs/tax-regimes.catalog';
 import { isValidCfdiUse } from '../catalogs/cfdi-uses.catalog';
-import { IInvoiceRequest } from '../requests/invoice.request';
-import { ICreditNoteRequest } from '../requests/credit-note.request';
-import { IPaymentRequest } from '../requests/payment.request';
+import { IInvoiceRequest } from '../../domains/cfdi-builder/models/invoice/invoice.model';
+import { ICreditNoteRequest } from '../../domains/cfdi-builder/models/credit-note/credit-note.model';
+import { IPaymentRequest } from '../../domains/cfdi-builder/models/payment/payment.model';
 
 // Formato de RFC válido según el SAT, incluyendo los genéricos para público en general y extranjero
 const RFC_REGEX = /^([A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}|XAXX010101000|XEXX010101000)$/;
