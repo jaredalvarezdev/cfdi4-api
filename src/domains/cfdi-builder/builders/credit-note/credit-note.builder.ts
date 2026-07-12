@@ -7,7 +7,7 @@ import { round2 } from '../../utils/round2.util';
 export function buildCreditNote(payload: ICreditNoteRequest) {
 
     // Subtotal — suma de unitPrice × quantity de cada concepto
-    const subtotal = round2(
+    const subtotal: number = round2(
         payload.concepts.reduce((sum, concept) => {
             return sum + round2(concept.unitPrice * concept.quantity);
         }, 0)
@@ -27,5 +27,5 @@ export function buildCreditNote(payload: ICreditNoteRequest) {
     // Total — subtotal + impuestos trasladados
     const total = round2(subtotal + taxAmount);
 
-    return { ...payload, subtotal, taxAmount, total };
+    return { subtotal, taxAmount, total };
 }
