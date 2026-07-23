@@ -3,6 +3,13 @@
 // ================================
 import { IIssuer, IReceiver } from '../../../../shared/models/shared-cfdi.model';
 
+// Impuesto del documento relacionado — el mismo que llevaba el CFDI original que se está pagando
+export interface IRelatedDocumentTax {
+  type: string;         // IVA, ISR, IEPS
+  rate: number;         // Tasa — ejemplo: 0.16
+  withholding: boolean; // true = retención, false = traslado
+}
+
 // Documento relacionado al pago
 export interface IRelatedDocument {
   uuid: string;              // UUID del CFDI que se está pagando
@@ -11,6 +18,7 @@ export interface IRelatedDocument {
   previousBalance: number;   // Saldo anterior
   amountPaid: number;        // Importe pagado
   remainingBalance: number;  // Saldo restante después del pago
+  taxes: IRelatedDocumentTax[]; // Impuestos del documento — [] si no tiene
 }
 
 // Pago individual
