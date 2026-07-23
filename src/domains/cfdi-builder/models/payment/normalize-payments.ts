@@ -19,6 +19,11 @@ export function normalizePayments(payments: IPayment[]): IPayment[] {
             previousBalance: doc.previousBalance,
             amountPaid: doc.amountPaid,
             remainingBalance: doc.remainingBalance,
+            taxes: (doc.taxes || []).map((tax) => ({
+                type: tax.type.trim().toUpperCase(),
+                rate: tax.rate > 1 ? tax.rate / 100 : tax.rate,
+                withholding: tax.withholding,
+            })),
         })),
     }));
 }
