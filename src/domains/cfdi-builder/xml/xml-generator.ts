@@ -45,8 +45,7 @@ export function generatePaymentXml(payload: IPaymentRequest): string {
         buildVoucherXml(payload, 0, 0) +
         buildIssuerXml(payload.issuer) +
         buildReceiverXml(payload.receiver) +
-        `<cfdi:Conceptos><cfdi:Concepto ClaveProdServ="84111506" ClaveUnidad="ACT" Descripcion="Pago" ValorUnitario="0" Cantidad="1" Importe="0"><cfdi:Impuestos/></cfdi:Concepto></cfdi:Conceptos>` +
-        `<cfdi:Impuestos/>` +
+        `<cfdi:Conceptos><cfdi:Concepto ClaveProdServ="84111506" ClaveUnidad="ACT" Descripcion="Pago" ValorUnitario="0" Cantidad="1" Importe="0" ObjetoImp="01"/></cfdi:Conceptos>` +
         `<cfdi:Complemento>${buildPayments20Xml(payload.payments)}</cfdi:Complemento>` +
         '</cfdi:Comprobante>';
 
