@@ -4,6 +4,7 @@
 import { IConcept } from '../../../../shared/models/shared-cfdi.model';
 import { xmlEscape } from '../../../../shared/utils/xml-escape.util';
 import { round2 } from '../../../../shared/utils/round2.util';
+import { getSatTaxCode } from '../../../../shared/catalogs/tax-types.catalog';
 
 function buildConceptTaxesXml(concept: IConcept): string {
     const base = round2(concept.unitPrice * concept.quantity);
@@ -14,11 +15,12 @@ function buildConceptTaxesXml(concept: IConcept): string {
     for (let taxIndex = 0; taxIndex < concept.taxes.length; taxIndex++) {
         const tax = concept.taxes[taxIndex];
         const amount = round2(base * tax.rate);
+        const satCode = getSatTaxCode(tax.type);
 
         if (tax.withholding) {
-            retentions += `<cfdi:Retencion Base="${base}" Impuesto="${tax.type}" TipoFactor="Tasa" TasaOCuota="${tax.rate.toFixed(6)}" Importe="${amount}"/>`;
+            retentions += `<cfdi:Retencion Base="${base}" Impuesto="${satCode}" TipoFactor="Tasa" TasaOCuota="${tax.rate.toFixed(6)}" Importe="${amount}"/>`;
         } else {
-            transfers += `<cfdi:Traslado Base="${base}" Impuesto="${tax.type}" TipoFactor="Tasa" TasaOCuota="${tax.rate.toFixed(6)}" Importe="${amount}"/>`;
+            transfers += `<cfdi:Traslado Base="${base}" Impuesto="${satCode}" TipoFactor="Tasa" TasaOCuota="${tax.rate.toFixed(6)}" Importe="${amount}"/>`;
         }
     }
 
