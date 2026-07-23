@@ -3,6 +3,7 @@
 // ================================
 import { IConcept } from '../../../../shared/models/shared-cfdi.model';
 import { round2 } from '../../../../shared/utils/round2.util';
+import { getSatTaxCode } from '../../../../shared/catalogs/tax-types.catalog';
 
 // Genera el bloque de impuestos globales del CFDI
 // Los traslados se consolidan por tipo+tasa como requiere el SAT
@@ -27,7 +28,7 @@ export function buildTaxesXml(concepts: IConcept[]): string {
 
             if (tax.withholding) {
                 totalRetentions = round2(totalRetentions + amount);
-                retentionsXml += `<cfdi:Retencion Impuesto="${tax.type}" Importe="${amount}"/>`;
+                retentionsXml += `<cfdi:Retencion Impuesto="${getSatTaxCode(tax.type)}" Importe="${amount}"/>`;
             } else {
                 // Clave única por tipo e impuesto para consolidar traslados del mismo tipo
                 const key = `${tax.type}-${tax.rate.toFixed(6)}`;
@@ -48,7 +49,7 @@ export function buildTaxesXml(concepts: IConcept[]): string {
     // Genera XML de traslados consolidados
     let transfersXml = '';
     transferMap.forEach((entry) => {
-        transfersXml += `<cfdi:Traslado Base="${entry.base}" Impuesto="${entry.type}" TipoFactor="Tasa" TasaOCuota="${entry.rate.toFixed(6)}" Importe="${entry.amount}"/>`;
+        transfersXml += `<cfdi:Traslado Base="${entry.base}" Impuesto="${getSatTaxCode(entry.type)}" TipoFactor="Tasa" TasaOCuota="${entry.rate.toFixed(6)}" Importe="${entry.amount}"/>`;
     });
 
     let retentionsAttribute = '';
