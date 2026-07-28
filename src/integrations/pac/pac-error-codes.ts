@@ -29,10 +29,11 @@ export const PAC_ERROR_CODES: Record<number, string> = {
   602: 'CFDI no existe.'
 };
 
+// Funcion para obtener el mensaje de error del PAC basado en el código proporcionado.
 export function getPacMessage(code: number, fallbackMessage?: string): string {
   return (
-    PAC_ERROR_CODES[code] ??
     fallbackMessage ??
+    PAC_ERROR_CODES[code] ??
     `Error desconocido del PAC. Código: ${code}`
   );
 }
