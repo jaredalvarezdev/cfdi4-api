@@ -35,3 +35,10 @@ export interface IConcept {
   quantity: number;     // Cantidad
   taxes: IConceptTax[];
 }
+
+// Información global — obligatoria cuando el receptor es XAXX010101000 (público en general)
+export interface IInformacionGlobal {
+  periodicity: string; // c_Periodicidad
+  months: string;       // c_Meses
+  year: number;         // Año fiscal
+}
