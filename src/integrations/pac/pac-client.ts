@@ -6,8 +6,8 @@ import { ITimbradoXmlResponse } from './pac.types';
 
 const PAC_URL = 'https://tester-stamp-1089629881551.us-central1.run.app/api/timbrado/xml';
 
-// Manda el XML al PAC y regresa la respuesta del timbrado
-export async function timbrarXml(xml: string): Promise<ITimbradoXmlResponse> {
+// Manda el XML al PAC de pruebas y regresa la respuesta del timbrado
+export async function stampXml(xml: string): Promise<ITimbradoXmlResponse> {
 
   if (!TESTER_API_USER || !TESTER_API_TOKEN) {
     throw new Error('Las variables TESTER_API_USER y TESTER_API_TOKEN son obligatorias.');

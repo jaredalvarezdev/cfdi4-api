@@ -1,5 +1,5 @@
 // ================================
-// TIMBRADO REQUEST
+// STAMPING REQUEST
 // ================================
 
 // El timbrado soporta los 3 tipos de comprobante — el campo `type`
@@ -8,4 +8,4 @@ import { IInvoiceRequest } from '../invoice/invoice.model';
 import { ICreditNoteRequest } from '../credit-note/credit-note.model';
 import { IPaymentRequest } from '../payment/payment.model';
 
-export type ITimbradoRequest = IInvoiceRequest | ICreditNoteRequest | IPaymentRequest;
+export type IStampingRequest = IInvoiceRequest | ICreditNoteRequest | IPaymentRequest;

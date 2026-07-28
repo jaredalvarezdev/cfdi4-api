@@ -1,14 +1,14 @@
 // ================================
-// TIMBRADO SERVICE
+// STAMPING SERVICE
 // ================================
-import { ITimbradoRequest } from './timbrado.model';
+import { IStampingRequest } from './stamping.model';
 import { IResponse } from '../../../../shared/models/response.model';
 import { buildInvoiceServ } from '../invoice/invoice.service';
 import { buildCreditNoteServ } from '../credit-note/credit-note.service';
 import { buildPaymentServ } from '../payment/payment.service';
-import { timbrarXml } from '../../../../integrations/pac/pac-client';
+import { stampXml } from '../../../../integrations/pac/pac-client';
 
-export async function buildTimbradoServ(payload: ITimbradoRequest): Promise<IResponse> {
+export async function buildStampingServ(payload: IStampingRequest): Promise<IResponse> {
 
   // 1. Construye el XML reusando el service correspondiente al tipo
   let buildResult: IResponse;
@@ -35,7 +35,7 @@ export async function buildTimbradoServ(payload: ITimbradoRequest): Promise<IRes
   // 3. Manda el XML construido al PAC de pruebas
   try {
     const xml = buildResult.data as string;
-    const pacResult = await timbrarXml(xml);
+    const pacResult = await stampXml(xml);
     return { ok: true, data: pacResult };
 
   } catch (error: any) {
