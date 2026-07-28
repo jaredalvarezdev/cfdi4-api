@@ -68,6 +68,17 @@ export function validateGeneral(
     throw new Error(`Código postal inválido: ${payload.expeditionZipCode}`);
   }
 
+  // ---- USO DE CFDI ----
+  // Aplica a los 3 tipos. Para Pago (P) el único valor válido es CP01,
+  // ya lo fuerza normalizeReceiver, pero se valida aquí como respaldo.
+  if (payload.type === 'P') {
+    if (payload.receiver.cfdiUse !== 'CP01') {
+      throw new Error(`Uso de CFDI inválido para Pago: ${payload.receiver.cfdiUse} (debe ser CP01)`);
+    }
+  } else if (!isValidCfdiUse(payload.receiver.cfdiUse)) {
+    throw new Error(`Uso de CFDI inválido: ${payload.receiver.cfdiUse}`);
+  }
+
   // ---- FORMA Y MÉTODO DE PAGO ----
   // Solo aplica a Ingreso (I) y Egreso (E), no a Pago (P)
   if (payload.type !== 'P') {
@@ -80,12 +91,22 @@ export function validateGeneral(
       throw new Error(`Método de pago inválido: ${payload.paymentMethod}`);
     }
 
-    if (!isValidCfdiUse(payload.receiver.cfdiUse)) {
-      throw new Error(`Uso de CFDI inválido: ${payload.receiver.cfdiUse}`);
-    }
-
     if (!isValidCurrency(payload.currency)) {
       throw new Error(`Moneda inválida: ${payload.currency}`);
+    }
+
+    // ---- TIPO DE CAMBIO ----
+    // Regla SAT (CFDI40115): TipoCambio es obligatorio y debe ser > 0 cuando
+    // la moneda es distinta de MXN y XXX. Cuando la moneda ES MXN o XXX,
+    // no debe enviarse (o, si se envía, debe ser exactamente 1).
+    const isMxnOrXxx = payload.currency === 'MXN' || payload.currency === 'XXX';
+
+    if (!isMxnOrXxx) {
+      if (payload.exchangeRate === undefined || payload.exchangeRate === null || payload.exchangeRate <= 0) {
+        throw new Error(`El campo exchangeRate es obligatorio y debe ser mayor a 0 cuando la moneda (${payload.currency}) es distinta de MXN.`);
+      }
+    } else if (payload.exchangeRate !== undefined && payload.exchangeRate !== null && payload.exchangeRate !== 1) {
+      throw new Error(`El campo exchangeRate no debe enviarse (o debe ser 1) cuando la moneda es ${payload.currency}.`);
     }
   }
 }
