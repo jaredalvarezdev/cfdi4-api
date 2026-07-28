@@ -1,7 +1,7 @@
 // ================================
 // CREDIT NOTE REQUEST
 // ================================
-import { IIssuer, IReceiver, IConcept } from '../../../../shared/models/shared-cfdi.model';
+import { IIssuer, IReceiver, IConcept, IInformacionGlobal } from '../../../../shared/models/shared-cfdi.model';
 
 // CFDI relacionado — obligatorio en Egreso
 export interface IRelatedCfdi {
@@ -20,4 +20,5 @@ export interface ICreditNoteRequest {
   currency: string;          // Moneda — c_Moneda
   expeditionZipCode: string;
   relatedCfdi: IRelatedCfdi; // CFDI relacionado — obligatorio en Egreso
+  globalInfo?: IInformacionGlobal; // Obligatorio solo si receiver.rfc === 'XAXX010101000'
 }

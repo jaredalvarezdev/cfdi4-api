@@ -9,6 +9,7 @@ import { validateDocumentType, validateGeneral } from '../../../../shared/valida
 import { validateConcepts } from '../../../../shared/validators/concepts.validator';
 import { validateTaxes } from '../../../../shared/validators/taxes.validator';
 import { validateRelatedCfdi } from './related-cfdi.validator';
+import { validateGlobalInfo } from '../invoice/global-info.validator';
 import { buildCreditNote } from './credit-note.builder';
 import { generateCreditNoteXml } from '../../xml/xml-generator';
 
@@ -34,6 +35,11 @@ export async function buildCreditNoteServ(payload: ICreditNoteRequest): Promise<
     }
 
     validateRelatedCfdi(payload.relatedCfdi);
+
+    // InformacionGlobal es obligatorio solo si el receptor es el RFC genérico de público en general
+    if (payload.receiver.rfc === 'XAXX010101000') {
+      validateGlobalInfo(payload.globalInfo);
+    }
 
     const document = buildCreditNote(payload);
     const xml = generateCreditNoteXml(payload, document.subtotal, document.total);
