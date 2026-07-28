@@ -1,6 +1,7 @@
 // ================================
 // SERVER
 // ================================
+import 'dotenv/config';
 import app from './app';
 import { PORT } from './config/environment';
 

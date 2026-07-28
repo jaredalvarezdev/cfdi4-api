@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Transforms structured JSON payloads into valid SAT-compliant CFDI 4.0 XML — supports Ingreso, Egreso and Pago document types.",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/server.ts"
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
