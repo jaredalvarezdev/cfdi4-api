@@ -1,111 +1,111 @@
 # cfdi4-api
 
-A REST API built with TypeScript, Node.js, and Express that transforms structured JSON payloads into SAT-compliant CFDI 4.0 XML documents, signs them via a PAC (certification provider), and returns the stamped CFDI. It supports the three main voucher types required by Mexico's tax authority (SAT): **Ingreso** (Income), **Egreso** (Credit Note), and **Pago** (Payment Complement 2.0).
+Una API REST construida con TypeScript, Node.js y Express que transforma peticiones JSON estructuradas en documentos XML de CFDI 4.0 conformes al SAT, los firma a través de un PAC (proveedor autorizado de certificación) y regresa el CFDI ya timbrado. Soporta los 3 tipos de comprobante principales que exige el Servicio de Administración Tributaria (SAT) de México: **Ingreso**, **Egreso** (Nota de Crédito) y **Pago** (Complemento de Pago 2.0).
 
-Developed as part of a professional internship (*estadía*) at **SIDETEC**, in collaboration with **Universidad Tecnológica de León (UTL)**.
+Desarrollado como parte de un proyecto de estadía profesional en **SIDETEC**, en colaboración con la **Universidad Tecnológica de León (UTL)**.
 
 ---
 
-## Table of Contents
+## Tabla de contenido
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [API Reference](#api-reference)
-- [Architecture](#architecture)
-- [Validation Rules](#validation-rules)
-- [Known Limitations](#known-limitations)
+- [Descripción general](#descripción-general)
+- [Características](#características)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Primeros pasos](#primeros-pasos)
+- [Variables de entorno](#variables-de-entorno)
+- [Referencia de la API](#referencia-de-la-api)
+- [Arquitectura](#arquitectura)
+- [Reglas de validación](#reglas-de-validación)
+- [Limitaciones conocidas](#limitaciones-conocidas)
 - [Roadmap](#roadmap)
-- [License](#license)
+- [Licencia](#licencia)
 
 ---
 
-## Overview
+## Descripción general
 
-`cfdi4-api` receives a structured JSON request describing an invoice, credit note, or payment complement, validates it against SAT catalogs and business rules, normalizes the input data, generates a well-formed CFDI 4.0 XML document, and submits it to a PAC (*Proveedor Autorizado de Certificación*) for stamping (*timbrado*) — returning the signed, SAT-valid CFDI along with its UUID.
+`cfdi4-api` recibe una petición JSON estructurada que describe una factura, una nota de crédito o un complemento de pago, la valida contra los catálogos y reglas de negocio del SAT, normaliza los datos de entrada, genera un documento XML de CFDI 4.0 bien formado, y lo envía a un PAC (*Proveedor Autorizado de Certificación*) para su timbrado — regresando el CFDI ya firmado y válido ante el SAT, junto con su UUID.
 
-The project follows a **domain-driven, layered architecture**, separating concerns between HTTP handling, business logic, XML generation, PAC integration, and shared validation/normalization utilities.
+El proyecto sigue una **arquitectura por dominios y en capas**, separando responsabilidades entre el manejo de peticiones HTTP, la lógica de negocio, la generación de XML, la integración con el PAC, y las utilidades compartidas de validación/normalización.
 
-## Features
+## Características
 
-- Generates SAT-compliant CFDI 4.0 XML for:
-  - **Ingreso (I)** — standard invoices
-  - **Egreso (E)** — credit notes, with related-CFDI referencing
-  - **Pago (P)** — Payment Complement 2.0
-- Single stamping endpoint that dispatches to the correct builder based on document `type`, then submits the generated XML to a PAC for signing
-- Validates issuer and receiver data, including:
-  - RFC format (including generic RFCs `XAXX010101000` / `XEXX010101000` for public/foreign receivers)
-  - Tax regime, payment form, payment method, CFDI use, and currency against official SAT catalogs
-- Conditionally requires and generates **InformacionGlobal** for Ingreso and Egreso — only when the receiver is a generic RFC (public-at-large sales); omitted automatically for any other receiver, and never applies to Pago
-- Validates line-item concepts (product/unit keys, quantities, pricing, taxes)
-- Validates tax rates for IVA, ISR, and IEPS against SAT-permitted values
-- Normalizes and sanitizes incoming data before XML construction (issuer, receiver, concepts, taxes, related documents) — including automatic correction of tax regime/CFDI use for generic RFCs
-- Escapes special XML characters to prevent malformed output
-- Distinguishes PAC-level rejections (invalid seal, missing required node, etc.) from successful stamping — never returns a rejected *timbrado* as a success
-- Centralized error handling middleware with consistent JSON error responses
-- Automatic tax consolidation and subtotal/total calculation with proper 2-decimal rounding
+- Genera XML de CFDI 4.0 conforme al SAT para:
+  - **Ingreso (I)** — facturas estándar
+  - **Egreso (E)** — notas de crédito, con referencia a CFDI relacionado
+  - **Pago (P)** — Complemento de Pago 2.0
+- Endpoint único de timbrado que despacha al builder correcto según el campo `type` del documento, y envía el XML generado a un PAC para su firma
+- Valida los datos de emisor y receptor, incluyendo:
+  - Formato de RFC (incluyendo los RFC genéricos `XAXX010101000` / `XEXX010101000` para receptores de público en general o extranjeros)
+  - Régimen fiscal, forma de pago, método de pago, uso de CFDI y moneda contra los catálogos oficiales del SAT
+- Exige y genera de forma condicional el nodo **InformacionGlobal** para Ingreso y Egreso — solo cuando el receptor es un RFC genérico (ventas a público en general); se omite automáticamente para cualquier otro receptor, y nunca aplica a Pago
+- Valida los conceptos de la factura (claves de producto/unidad, cantidades, precios, impuestos)
+- Valida las tasas de impuestos de IVA, ISR e IEPS contra los valores permitidos por el SAT
+- Normaliza y sanea los datos de entrada antes de construir el XML (emisor, receptor, conceptos, impuestos, documentos relacionados) — incluyendo la corrección automática de régimen fiscal/uso de CFDI para RFC genéricos
+- Escapa caracteres especiales de XML para evitar salidas mal formadas
+- Distingue entre un rechazo del PAC (sello inválido, nodo obligatorio faltante, etc.) y un timbrado exitoso — nunca regresa un timbrado rechazado como si fuera exitoso
+- Middleware centralizado de manejo de errores con respuestas JSON consistentes
+- Consolidación automática de impuestos y cálculo de subtotal/total con el redondeo correcto a 2 decimales
 
-## Tech Stack
+## Tecnologías utilizadas
 
-| Layer              | Technology    |
-|--------------------|---------------|
-| Runtime            | Node.js       |
-| Language           | TypeScript    |
-| Web framework      | Express 5     |
-| Environment config | dotenv        |
-| Dev tooling        | ts-node-dev   |
+| Capa                  | Tecnología    |
+|-----------------------|---------------|
+| Entorno de ejecución  | Node.js       |
+| Lenguaje              | TypeScript    |
+| Framework web         | Express 5     |
+| Configuración de entorno | dotenv     |
+| Herramientas de desarrollo | ts-node-dev |
 
-## Project Structure
+## Estructura del proyecto
 
 ```
 src/
-├── app.ts                         # Express app configuration (middlewares, routes)
-├── server.ts                      # Entry point — starts the HTTP server
-├── routes.ts                      # Top-level route mounting
+├── app.ts                         # Configuración de la app de Express (middlewares, rutas)
+├── server.ts                      # Punto de entrada — levanta el servidor HTTP
+├── routes.ts                      # Montaje de rutas de nivel superior
 ├── config/
-│   └── environment.ts             # PORT, TIME_ZONE, PAC test credentials, and other runtime config
+│   └── environment.ts             # PORT, TIME_ZONE, credenciales de prueba del PAC, y demás configuración
 ├── domains/
 │   └── cfdi-builder/
 │       ├── cfdi-builder.routes.ts # POST /invoice, /credit-note, /payment, /stamping
 │       ├── models/
-│       │   ├── invoice/           # Ingreso: model, controller, service, builder, InformacionGlobal validator
-│       │   ├── credit-note/       # Egreso: model, controller, service, builder, related-CFDI validator
-│       │   ├── payment/           # Pago: model, controller, service, builder, complement validator
-│       │   └── stamping/          # Dispatches to the correct builder by type, then submits to the PAC
-│       └── xml/                   # XML fragment generators per CFDI section
+│       │   ├── invoice/           # Ingreso: modelo, controller, service, builder, validador de InformacionGlobal
+│       │   ├── credit-note/       # Egreso: modelo, controller, service, builder, validador de CFDI relacionado
+│       │   ├── payment/           # Pago: modelo, controller, service, builder, validador del complemento
+│       │   └── stamping/          # Despacha al builder correcto según el tipo, y envía al PAC
+│       └── xml/                   # Generadores de fragmentos de XML por sección del CFDI
 │           ├── issuer/            # <cfdi:Emisor>
 │           ├── receiver/          # <cfdi:Receptor>
 │           ├── concepts/          # <cfdi:Conceptos>
 │           ├── taxes/             # <cfdi:Impuestos>
 │           ├── related-cfdi/      # <cfdi:CfdiRelacionados>
 │           ├── global-info/       # <cfdi:InformacionGlobal>
-│           ├── payments20/        # Payment Complement 2.0
-│           ├── voucher/           # Root <cfdi:Comprobante> element
-│           └── xml-generator.ts   # Top-level XML assembly
+│           ├── payments20/        # Complemento de Pago 2.0
+│           ├── voucher/           # Elemento raíz <cfdi:Comprobante>
+│           └── xml-generator.ts   # Ensamblaje final del XML
 ├── integrations/
-│   └── pac/                       # PAC client, error code catalog, base64 stamped-xml decoding
+│   └── pac/                       # Cliente del PAC, catálogo de códigos de error, decodificación base64 del XML timbrado
 ├── middlewares/
-│   ├── cors.middleware.ts         # CORS headers
-│   └── error.middleware.ts        # Centralized error handling
+│   ├── cors.middleware.ts         # Encabezados CORS
+│   └── error.middleware.ts        # Manejo centralizado de errores
 └── shared/
-    ├── catalogs/                  # SAT official catalogs (tax regimes, payment forms/methods, CFDI uses, currencies, tax types, relation types, periodicity)
-    ├── models/                    # Shared TypeScript interfaces
-    ├── normalizers/                # Input sanitization (issuer, receiver, concepts, taxes, related documents)
-    ├── utils/                      # Date formatting, 2-decimal rounding, XML escaping
-    └── validators/                 # General, concept, and tax business-rule validation
+    ├── catalogs/                  # Catálogos oficiales del SAT (regímenes fiscales, formas/métodos de pago, usos de CFDI, monedas, tipos de impuesto, tipos de relación, periodicidad)
+    ├── models/                    # Interfaces de TypeScript compartidas
+    ├── normalizers/                # Saneamiento de datos de entrada (emisor, receptor, conceptos, impuestos, documentos relacionados)
+    ├── utils/                      # Formateo de fechas, redondeo a 2 decimales, escape de XML
+    └── validators/                 # Validación de reglas de negocio generales, de conceptos e impuestos
 ```
 
-## Getting Started
+## Primeros pasos
 
-### Prerequisites
+### Requisitos previos
 
-- Node.js 18 or higher
+- Node.js 18 o superior
 - npm
 
-### Installation
+### Instalación
 
 ```bash
 git clone https://github.com/Jared77zz/cfdi4-api.git
@@ -113,17 +113,17 @@ cd cfdi4-api
 npm install
 ```
 
-### Running in development
+### Ejecución en desarrollo
 
 ```bash
 npm run dev
 ```
 
-The server starts on `http://localhost:3000` by default (configurable via `PORT`).
+El servidor arranca en `http://localhost:3000` por defecto (configurable con `PORT`).
 
-## Environment Variables
+## Variables de entorno
 
-Create a `.env` file in the project root:
+Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
 PORT=3000
@@ -131,40 +131,40 @@ TESTER_API_USER=your_pac_test_user
 TESTER_API_TOKEN=your_pac_test_token
 ```
 
-> `.env` is excluded from version control via `.gitignore`. Never commit real secrets or tokens to the repository.
-> `TESTER_API_USER` / `TESTER_API_TOKEN` are required for the `/stamping` endpoint to reach the PAC — the other three endpoints (`/invoice`, `/credit-note`, `/payment`) build unsigned XML and don't need them.
+> `.env` está excluido del control de versiones mediante `.gitignore`. Nunca subas secretos o tokens reales al repositorio.
+> `TESTER_API_USER` / `TESTER_API_TOKEN` son obligatorios para que el endpoint `/stamping` pueda comunicarse con el PAC — los otros tres endpoints (`/invoice`, `/credit-note`, `/payment`) generan XML sin firmar y no los necesitan.
 
-## API Reference
+## Referencia de la API
 
-All endpoints accept `application/json` and are mounted under `/api/cfdi-builder`.
+Todos los endpoints aceptan `application/json` y están montados bajo `/api/cfdi-builder`.
 
 ### `POST /api/cfdi-builder/invoice`
 
-Builds a CFDI of type **Ingreso (I)**.
+Construye un CFDI de tipo **Ingreso (I)**.
 
-If `receiver.rfc` is `XAXX010101000` (public-at-large), the payload must also include a `globalInfo` object:
+Si `receiver.rfc` es `XAXX010101000` (público en general), la petición también debe incluir un objeto `globalInfo`:
 
 ```json
 "globalInfo": { "periodicity": "04", "months": "07", "year": 2026 }
 ```
 
-For any other receiver RFC, `globalInfo` is not required and is ignored if sent.
+Para cualquier otro RFC de receptor, `globalInfo` no es obligatorio y se ignora si se manda.
 
-**Response:** `200 OK` with `Content-Type: application/xml` — the generated (unsigned) CFDI XML. On validation failure, returns `400` with a JSON error body.
+**Respuesta:** `200 OK` con `Content-Type: application/xml` — el XML del CFDI generado (sin firmar). Si falla la validación, regresa `400` con un cuerpo de error en JSON.
 
 ### `POST /api/cfdi-builder/credit-note`
 
-Builds a CFDI of type **Egreso (E)**. Requires a `relatedCfdi` object (`uuid`, `relationType`) referencing the original invoice being credited. The same conditional `globalInfo` requirement as Ingreso applies for generic receivers.
+Construye un CFDI de tipo **Egreso (E)**. Requiere un objeto `relatedCfdi` (`uuid`, `relationType`) que referencie la factura original que se está acreditando. Aplica la misma regla condicional de `globalInfo` que en Ingreso para receptores genéricos.
 
 ### `POST /api/cfdi-builder/payment`
 
-Builds a CFDI of type **Pago (P)** using Payment Complement 2.0, referencing one or more related documents and their corresponding payments. `InformacionGlobal` does not apply to this document type, regardless of the receiver's RFC.
+Construye un CFDI de tipo **Pago (P)** usando el Complemento de Pago 2.0, referenciando uno o más documentos relacionados y sus pagos correspondientes. `InformacionGlobal` no aplica a este tipo de documento, sin importar el RFC del receptor.
 
 ### `POST /api/cfdi-builder/stamping`
 
-Accepts the same payload shape as `/invoice`, `/credit-note`, or `/payment` (distinguished by the `type` field, including the conditional `globalInfo` rules above), builds the corresponding XML, and submits it to the PAC for stamping.
+Acepta el mismo formato de petición que `/invoice`, `/credit-note` o `/payment` (distinguido por el campo `type`, incluyendo las reglas condicionales de `globalInfo` mencionadas arriba), construye el XML correspondiente, y lo envía al PAC para su timbrado.
 
-**Response:** `200 OK` with a JSON body:
+**Respuesta:** `200 OK` con un cuerpo JSON:
 
 ```json
 {
@@ -179,7 +179,7 @@ Accepts the same payload shape as `/invoice`, `/credit-note`, or `/payment` (dis
 }
 ```
 
-On validation failure or PAC rejection, returns `400` with:
+Si falla la validación o el PAC rechaza el timbrado, regresa `400` con:
 
 ```json
 {
@@ -188,55 +188,55 @@ On validation failure or PAC rejection, returns `400` with:
 }
 ```
 
-## Architecture
+## Arquitectura
 
-Each CFDI type follows the same layered flow:
+Cada tipo de CFDI sigue el mismo flujo por capas:
 
 ```
 Controller → Service → Builder → XML Generator
 ```
 
-The `/stamping` endpoint adds one more step on top of this:
+El endpoint `/stamping` agrega un paso adicional sobre este flujo:
 
 ```
-Controller → Service → (dispatch by type to the matching Service above) → PAC → decoded, stamped XML
+Controller → Service → (despacha por tipo al Service correspondiente de arriba) → PAC → XML timbrado y decodificado
 ```
 
-- **Controller** — parses the HTTP request and returns the appropriate HTTP response.
-- **Service** — orchestrates validation, normalization, and calculation of totals.
-- **Builder** — computes derived financial fields (subtotal, tax amount, total) with proper rounding.
-- **XML Generator** — assembles the final CFDI XML string from validated, normalized data, using SAT-compliant namespaces and schema references.
-- **PAC integration** (`stamping` only) — submits the generated XML to the certification provider, verifies the stamping actually succeeded (not just that the request was received), and decodes the returned base64 XML.
+- **Controller** — procesa la petición HTTP y regresa la respuesta HTTP correspondiente.
+- **Service** — orquesta la validación, normalización y cálculo de totales.
+- **Builder** — calcula los campos financieros derivados (subtotal, monto de impuestos, total) con el redondeo correcto.
+- **XML Generator** — ensambla el string final del XML del CFDI a partir de los datos ya validados y normalizados, usando los namespaces y referencias de esquema que exige el SAT.
+- **Integración con el PAC** (solo en `stamping`) — envía el XML generado al proveedor de certificación, verifica que el timbrado realmente se haya completado (no solo que la petición se haya recibido), y decodifica el XML en base64 que regresa.
 
-Shared logic (SAT catalogs, validators, normalizers, and utilities) lives under `src/shared/` and is reused across all three CFDI types to avoid duplication and keep business rules consistent.
+La lógica compartida (catálogos del SAT, validadores, normalizadores y utilidades) vive en `src/shared/` y se reutiliza entre los 3 tipos de CFDI para evitar duplicación y mantener las reglas de negocio consistentes.
 
-## Validation Rules
+## Reglas de validación
 
-| Rule | Applies to | Details |
+| Regla | Aplica a | Detalle |
 |---|---|---|
-| RFC format | Issuer & Receiver | Must match the SAT-issued format, or one of the two generic RFCs for public/foreign receivers |
-| Tax regime | Issuer & Receiver | Must exist in the official SAT catalog. For generic receiver RFCs, tax regime and CFDI use are normalized automatically (`616`, and `S01` or `CP01` depending on document type) |
-| Postal codes | Issuer & Receiver | Must be exactly 5 digits |
-| Payment form / method / CFDI use / currency | Ingreso, Egreso | Validated against SAT catalogs — not required for Payment Complements, per SAT rules |
-| Concepts | Ingreso, Egreso | At least one item; positive quantity and unit price; product/unit keys must match SAT length requirements; `taxes` must be an array (empty if not applicable) |
-| Tax rates | All concept/document taxes | IVA: 0%, 8%, or 16% · ISR: 10% or 11.25% · IEPS: greater than 0% and at most 160% |
-| **InformacionGlobal** | Ingreso, Egreso | Required **only** when `receiver.rfc === "XAXX010101000"` — omitted entirely, and not validated, for any other receiver. When required: `periodicity` must exist in `c_Periodicidad`, `months` must be a valid `c_Meses` code, and `year` must be a reasonable value. **Never applies to Pago**, regardless of the receiver. |
+| Formato de RFC | Emisor y Receptor | Debe coincidir con el formato que emite el SAT, o ser uno de los 2 RFC genéricos para receptores de público en general/extranjeros |
+| Régimen fiscal | Emisor y Receptor | Debe existir en el catálogo oficial del SAT. Para RFC de receptor genéricos, el régimen fiscal y el uso de CFDI se normalizan automáticamente (`616`, y `S01` o `CP01` según el tipo de documento) |
+| Código postal | Emisor y Receptor | Debe tener exactamente 5 dígitos |
+| Forma de pago / método de pago / uso de CFDI / moneda | Ingreso, Egreso | Validados contra los catálogos del SAT — no se exigen en los Complementos de Pago, conforme a las reglas del SAT |
+| Conceptos | Ingreso, Egreso | Al menos un concepto; cantidad y valor unitario positivos; las claves de producto/unidad deben cumplir la longitud que exige el SAT; `taxes` debe ser un arreglo (vacío si no aplica) |
+| Tasas de impuestos | Impuestos de cualquier concepto/documento | IVA: 0%, 8% o 16% · ISR: 10% u 11.25% · IEPS: mayor a 0% y hasta 160% |
+| **InformacionGlobal** | Ingreso, Egreso | Obligatorio **únicamente** cuando `receiver.rfc === "XAXX010101000"` — se omite por completo, y no se valida, para cualquier otro receptor. Cuando es obligatorio: `periodicity` debe existir en `c_Periodicidad`, `months` debe ser un código válido de `c_Meses`, y `year` debe ser un valor razonable. **Nunca aplica a Pago**, sin importar el receptor. |
 
-## Known Limitations
+## Limitaciones conocidas
 
-- Credit notes (Egreso) currently support a single related CFDI UUID.
-- Some currency-related fields are fixed rather than fully dynamic.
-- Discounts are not yet supported.
-- PAC integration currently points to a test/sandbox stamping service — not a production PAC contract.
-- No API key or authentication middleware yet — the API is open to any caller.
-- Not yet deployed; runs locally only.
+- Las notas de crédito (Egreso) actualmente solo soportan un único UUID de CFDI relacionado.
+- Algunos campos relacionados con moneda están fijos en lugar de ser completamente dinámicos.
+- Los descuentos todavía no están soportados.
+- La integración con el PAC actualmente apunta a un servicio de timbrado de prueba/sandbox — no a un contrato de PAC de producción.
+- Todavía no hay middleware de autenticación ni llave de API — la API está abierta a cualquier consumidor.
+- Aún no está desplegada; solo corre en local.
 
 ## Roadmap
 
-- [x] PAC integration endpoint: receive a JSON payload, build the XML, submit it for stamping, and return the signed CFDI
-- [ ] API key authentication middleware to restrict access to authorized clients
-- [ ] Production deployment (Render)
+- [x] Endpoint de integración con el PAC: recibir un JSON, construir el XML, enviarlo a timbrar, y regresar el CFDI firmado
+- [ ] Middleware de autenticación por llave de API para restringir el acceso a clientes autorizados
+- [ ] Despliegue en producción (Render)
 
-## License
+## Licencia
 
-Academic project — Universidad Tecnológica de León (UTL) / SIDETEC.
+Proyecto académico — Universidad Tecnológica de León (UTL) / SIDETEC.
