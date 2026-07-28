@@ -26,6 +26,7 @@ export interface IPayment {
   paymentDate: string;                  // Fecha del pago — formato ISO 8601
   paymentForm: string;                  // Forma de pago — c_FormaPago
   currency: string;                     // Moneda — c_Moneda
+  exchangeRate?: number;                // TipoCambioP — obligatorio si currency !== 'MXN' (y != 'XXX')
   amount: number;                       // Monto del pago
   relatedDocuments: IRelatedDocument[]; // Documentos que cubre este pago
 }

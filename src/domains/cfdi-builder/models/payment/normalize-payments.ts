@@ -11,6 +11,7 @@ export function normalizePayments(payments: IPayment[]): IPayment[] {
         paymentDate: payment.paymentDate.trim(),
         paymentForm: payment.paymentForm.trim().toUpperCase(),
         currency: payment.currency.trim().toUpperCase(),
+        exchangeRate: payment.exchangeRate,
         amount: payment.amount,
         relatedDocuments: payment.relatedDocuments.map((doc) => ({
             uuid: doc.uuid.trim().toUpperCase(),
