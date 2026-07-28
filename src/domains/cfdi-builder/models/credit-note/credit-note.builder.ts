@@ -24,8 +24,19 @@ export function buildCreditNote(payload: ICreditNoteRequest) {
         }, 0)
     );
 
-    // Total — subtotal + impuestos trasladados
-    const total = round2(subtotal + taxAmount);
+    // Impuestos retenidos — suma de retenciones de cada concepto
+    const retentionAmount = round2(
+        payload.concepts.reduce((sum, concept) => {
+            const base = round2(concept.unitPrice * concept.quantity);
+            const conceptRetentions = concept.taxes
+                .filter((tax) => tax.withholding)
+                .reduce((taxSum, tax) => taxSum + round2(base * tax.rate), 0);
+            return sum + round2(conceptRetentions);
+        }, 0)
+    );
 
-    return { subtotal, taxAmount, total };
+    // Total — subtotal + impuestos trasladados − impuestos retenidos
+    const total = round2(subtotal + taxAmount - retentionAmount);
+
+    return { subtotal, taxAmount, retentionAmount, total };
 }
