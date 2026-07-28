@@ -1,15 +1,11 @@
 // ================================
 // TIMBRADO REQUEST
 // ================================
-import { IIssuer, IReceiver, IConcept } from '../../../../shared/models/shared-cfdi.model';
 
-// Request principal — el emisor lo manda el cliente, igual que en invoice/credit-note/payment
-export interface ITimbradoRequest {
-  issuer: IIssuer;
-  receiver: IReceiver;
-  concepts: IConcept[];
-  paymentForm: string;
-  paymentMethod: string;
-  currency: string;
-  expeditionZipCode: string;
-}
+// El timbrado soporta los 3 tipos de comprobante — el campo `type`
+// de cada interfaz decide cuál builder/service se usa
+import { IInvoiceRequest } from '../invoice/invoice.model';
+import { ICreditNoteRequest } from '../credit-note/credit-note.model';
+import { IPaymentRequest } from '../payment/payment.model';
+
+export type ITimbradoRequest = IInvoiceRequest | ICreditNoteRequest | IPaymentRequest;
