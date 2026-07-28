@@ -5,6 +5,7 @@ import { IPayment } from './payment.model';
 import { round2 } from '../../../../shared/utils/round2.util';
 import { isValidPaymentForm } from '../../../../shared/catalogs/payment-forms.catalog';
 import { isValidCurrency } from '../../../../shared/catalogs/currencies.catalog';
+import { validateTaxes } from '../../../../shared/validators/taxes.validator';
 
 // Formato de fecha ISO 8601 — ejemplo: 2024-01-15T10:30:00
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
@@ -27,6 +28,19 @@ export function validatePaymentComplement(payments: IPayment[]): void {
 
         if (!isValidCurrency(payment.currency)) {
             throw new Error(`El pago ${paymentNumber} tiene una moneda inválida: ${payment.currency}`);
+        }
+
+        // ---- TIPO DE CAMBIO ----
+        // Misma regla SAT (CFDI40115) que aplica a Ingreso/Egreso: TipoCambioP es
+        // obligatorio y debe ser > 0 cuando la moneda del pago no es MXN ni XXX.
+        const isMxnOrXxx = payment.currency === 'MXN' || payment.currency === 'XXX';
+
+        if (!isMxnOrXxx) {
+            if (payment.exchangeRate === undefined || payment.exchangeRate === null || payment.exchangeRate <= 0) {
+                throw new Error(`El pago ${paymentNumber} requiere exchangeRate (mayor a 0) porque su moneda (${payment.currency}) es distinta de MXN.`);
+            }
+        } else if (payment.exchangeRate !== undefined && payment.exchangeRate !== null && payment.exchangeRate !== 1) {
+            throw new Error(`El pago ${paymentNumber} no debe llevar exchangeRate (o debe ser 1) porque su moneda es ${payment.currency}.`);
         }
 
         if (payment.amount <= 0) {
@@ -73,6 +87,14 @@ export function validatePaymentComplement(payments: IPayment[]): void {
 
             if (expectedBalance !== round2(doc.remainingBalance)) {
                 throw new Error(`El documento ${docNumber} del pago ${paymentNumber} no cuadra: esperado ${expectedBalance}, recibido ${doc.remainingBalance}`);
+            }
+
+            // Valida tipo, tasa y coherencia de retención de los impuestos del documento —
+            // mismo validador que usan los conceptos de Ingreso/Egreso
+            try {
+                validateTaxes(doc.taxes);
+            } catch (error: any) {
+                throw new Error(`El documento ${docNumber} del pago ${paymentNumber}: ${error.message}`);
             }
 
             totalAmountPaid = round2(totalAmountPaid + doc.amountPaid);
