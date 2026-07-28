@@ -52,14 +52,27 @@ export function buildTaxesXml(concepts: IConcept[]): string {
         transfersXml += `<cfdi:Traslado Base="${entry.base}" Impuesto="${getSatTaxCode(entry.type)}" TipoFactor="Tasa" TasaOCuota="${entry.rate.toFixed(6)}" Importe="${entry.amount}"/>`;
     });
 
+    // Solo se agrega si hubo al menos un traslado real
+    let transfersAttribute = '';
+    if (transfersXml) {
+        transfersAttribute = ` TotalImpuestosTrasladados="${totalTransfers}"`;
+    }
+
+    // Solo se agrega si hubo al menos una retención real
     let retentionsAttribute = '';
-    if (totalRetentions > 0) {
+    if (retentionsXml) {
         retentionsAttribute = ` TotalImpuestosRetenidos="${totalRetentions}"`;
     }
 
+    // El XSD del SAT exige Retenciones antes que Traslados dentro de cfdi:Impuestos (a nivel Comprobante)
     let xml = '';
-    if (transfersXml) xml += `<cfdi:Traslados>${transfersXml}</cfdi:Traslados>`;
     if (retentionsXml) xml += `<cfdi:Retenciones>${retentionsXml}</cfdi:Retenciones>`;
+    if (transfersXml) xml += `<cfdi:Traslados>${transfersXml}</cfdi:Traslados>`;
 
-    return `<cfdi:Impuestos TotalImpuestosTrasladados="${totalTransfers}"${retentionsAttribute}>${xml}</cfdi:Impuestos>`;
+    // Sin traslados ni retenciones no hay nodo Impuestos que emitir
+    if (!xml) {
+        return '';
+    }
+
+    return `<cfdi:Impuestos${transfersAttribute}${retentionsAttribute}>${xml}</cfdi:Impuestos>`;
 }

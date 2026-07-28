@@ -24,6 +24,8 @@ function buildConceptTaxesXml(concept: IConcept): string {
         }
     }
 
+    // A nivel Concepto, el XSD del SAT exige Traslados antes que Retenciones dentro de cfdi:Impuestos
+    // (orden inverso al que exige a nivel Comprobante global)
     let taxes = '';
     if (transfers) taxes += `<cfdi:Traslados>${transfers}</cfdi:Traslados>`;
     if (retentions) taxes += `<cfdi:Retenciones>${retentions}</cfdi:Retenciones>`;
