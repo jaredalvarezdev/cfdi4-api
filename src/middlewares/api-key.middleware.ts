@@ -1,16 +1,23 @@
+// ================================
+// API AUTH MIDDLEWARE
+// ================================
 import { Request, Response, NextFunction } from 'express';
-import { API_KEY } from '../config/environment';
+import { API_USER, API_TOKEN } from '../config/environment';
 
+// Protege las rutas que lo usen, exigiendo los headers x-api-user y x-api-token
 export const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const providedKey = req.header('x-api-key');
+  const providedUser = req.header('x-api-user');
+  const providedToken = req.header('x-api-token');
 
-  if (!API_KEY) {
-    res.status(500).json({ ok: false, message: 'API_KEY no configurada en el servidor' });
+  // Si no configuraste las credenciales en el .env, es un error de configuración del servidor
+  if (!API_USER || !API_TOKEN) {
+    res.status(500).json({ ok: false, message: 'API_USER o API_TOKEN no configurados en el servidor' });
     return;
   }
 
-  if (!providedKey || providedKey !== API_KEY) {
-    res.status(401).json({ ok: false, message: 'API key inválida o faltante' });
+  // Ambos headers deben coincidir exactamente con las credenciales configuradas
+  if (providedUser !== API_USER || providedToken !== API_TOKEN) {
+    res.status(401).json({ ok: false, message: 'Credenciales de API inválidas o faltantes' });
     return;
   }
 

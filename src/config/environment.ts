@@ -12,5 +12,6 @@ export const TIME_ZONE = 'America/Mexico_City';
 export const TESTER_API_USER = process.env.TESTER_API_USER;
 export const TESTER_API_TOKEN = process.env.TESTER_API_TOKEN;
 
-// Clave de API para autenticación
-export const API_KEY = process.env.API_KEY;
+// Credenciales requeridas para autenticar peticiones a esta API
+export const API_USER = process.env.API_USER;
+export const API_TOKEN = process.env.API_TOKEN;

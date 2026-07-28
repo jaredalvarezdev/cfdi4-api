@@ -15,7 +15,7 @@ app.use(express.json());
 // Middlewares globales
 app.use(corsMiddleware);
 
-// Rutas principales — protegidas con API key antes de llegar a cualquier controller
+// Rutas principales — protegidas con usuario/token antes de llegar a cualquier controller
 app.use('/api', apiKeyMiddleware, router);
 
 // Manejo de errores — siempre al final
