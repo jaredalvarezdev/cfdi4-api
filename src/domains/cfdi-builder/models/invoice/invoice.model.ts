@@ -1,7 +1,7 @@
 // ================================
 // INVOICE REQUEST
 // ================================
-import { IIssuer, IReceiver, IConcept } from '../../../../shared/models/shared-cfdi.model';
+import { IIssuer, IReceiver, IConcept, IInformacionGlobal } from '../../../../shared/models/shared-cfdi.model';
 
 // Request principal — Ingreso
 export interface IInvoiceRequest {
@@ -13,4 +13,5 @@ export interface IInvoiceRequest {
   paymentMethod: string;     // Método de pago — PUE o PPD
   currency: string;          // Moneda — c_Moneda
   expeditionZipCode: string;
+  globalInfo?: IInformacionGlobal; // Obligatorio solo si receiver.rfc === 'XAXX010101000'
 }

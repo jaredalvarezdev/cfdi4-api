@@ -7,6 +7,7 @@ import { normalizeTaxes } from '../../../../shared/normalizers/normalize-taxes';
 import { validateDocumentType, validateGeneral } from '../../../../shared/validators/general.validator';
 import { validateConcepts } from '../../../../shared/validators/concepts.validator';
 import { validateTaxes } from '../../../../shared/validators/taxes.validator';
+import { validateGlobalInfo } from './global-info.validator';
 import { buildInvoice } from './invoice.builder';
 import { generateInvoiceXml } from '../../xml/xml-generator';
 
@@ -28,6 +29,11 @@ export async function buildInvoiceServ(payload: IInvoiceRequest): Promise<IRespo
 
     for (let conceptIndex = 0; conceptIndex < payload.concepts.length; conceptIndex++) {
       validateTaxes(payload.concepts[conceptIndex].taxes);
+    }
+
+    // InformacionGlobal es obligatorio solo si el receptor es el RFC genérico de público en general
+    if (payload.receiver.rfc === 'XAXX010101000') {
+      validateGlobalInfo(payload.globalInfo);
     }
 
     const document = buildInvoice(payload);
