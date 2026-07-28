@@ -19,16 +19,17 @@ export function normalizeReceiver(receiver: IReceiver, type: 'I' | 'E' | 'P' = '
     // RFC genérico de extranjero
     const isForeign = rfc === 'XEXX010101000';
 
-    // Para RFC genéricos el SAT obliga valores fijos según el tipo de CFDI
+    // Para RFC genéricos el SAT obliga régimen fiscal fijo
     if (isGeneric || isForeign) {
         taxRegime = '616';
+    }
 
-        // Pago siempre usa CP01, Ingreso y Egreso usan S01
-        if (type === 'P') {
-            cfdiUse = 'CP01';
-        } else {
-            cfdiUse = 'S01';
-        }
+    // Pago (P) siempre usa CP01 como UsoCFDI, sin importar el receptor.
+    // Ingreso y Egreso solo lo fuerzan cuando el receptor es genérico.
+    if (type === 'P') {
+        cfdiUse = 'CP01';
+    } else if (isGeneric || isForeign) {
+        cfdiUse = 'S01';
     }
 
     return {

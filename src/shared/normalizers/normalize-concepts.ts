@@ -3,12 +3,13 @@
 // ================================
 import { IConcept } from '../models/shared-cfdi.model';
 
-// Limpia y completa los conceptos de la factura
-// Si un concepto no trae impuestos, se asigna IVA 16% por defecto
+// Limpia los conceptos de la factura. No asigna impuestos por defecto:
+// un concepto sin impuestos (taxes: []) es válido y significa que no
+// aplica ningún impuesto (ObjetoImp="01" en el XML).
 export function normalizeConcepts(concepts: IConcept[]): IConcept[] {
 
     return concepts.map((concept) => {
-        
+
         return {
             productKey: concept.productKey.trim(),
             unitKey: concept.unitKey.trim().toUpperCase(),
