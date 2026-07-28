@@ -11,11 +11,17 @@ import { buildConceptsXml } from './concepts/concepts.xml';
 import { buildTaxesXml } from './taxes/taxes.xml';
 import { buildRelatedCfdiXml } from './related-cfdi/related-cfdi.xml';
 import { buildPayments20Xml } from './payments20/payments20.xml';
+import { buildGlobalInfoXml } from './global-info/global-info.xml';
 
 // Genera el XML completo de un CFDI de Ingreso
 export function generateInvoiceXml(payload: IInvoiceRequest, subtotal: number, total: number): string {
+    const globalInfoXml = payload.receiver.rfc === 'XAXX010101000' && payload.globalInfo
+        ? buildGlobalInfoXml(payload.globalInfo)
+        : '';
+
     const xml =
         buildVoucherXml(payload, subtotal, total) +
+        globalInfoXml +
         buildIssuerXml(payload.issuer) +
         buildReceiverXml(payload.receiver) +
         buildConceptsXml(payload.concepts) +
@@ -27,8 +33,13 @@ export function generateInvoiceXml(payload: IInvoiceRequest, subtotal: number, t
 
 // Genera el XML completo de un CFDI de Egreso
 export function generateCreditNoteXml(payload: ICreditNoteRequest, subtotal: number, total: number): string {
+    const globalInfoXml = payload.receiver.rfc === 'XAXX010101000' && payload.globalInfo
+        ? buildGlobalInfoXml(payload.globalInfo)
+        : '';
+
     const xml =
         buildVoucherXml(payload, subtotal, total) +
+        globalInfoXml +
         buildRelatedCfdiXml(payload.relatedCfdi) +
         buildIssuerXml(payload.issuer) +
         buildReceiverXml(payload.receiver) +
