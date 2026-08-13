@@ -1,6 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
 import express from 'express';
 import whatsappBotRoutes from './domains/whatsapp-bot/whatsapp-bot.routes';
 
