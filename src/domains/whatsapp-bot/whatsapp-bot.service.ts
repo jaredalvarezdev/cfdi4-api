@@ -44,7 +44,14 @@ export async function handleIncomingMessage(fromNumber: string, text: string): P
   } else if (FIXED_RESPONSES[trimmed]) {
     replyText = FIXED_RESPONSES[trimmed];
   } else {
-    replyText = await askOpenAI(trimmed);
+    // Protegido con try/catch: si OpenAI falla (rate limit, timeout, etc.),
+    // el bot responde con un mensaje amable en vez de crashear el proceso.
+    try {
+      replyText = await askOpenAI(trimmed);
+    } catch (error) {
+      console.error('Error al llamar a OpenAI:', error);
+      replyText = 'Tuve un problema procesando tu pregunta, intenta de nuevo en un momento 🙏';
+    }
   }
 
   const toNumber = normalizeMexicanNumber(fromNumber);
