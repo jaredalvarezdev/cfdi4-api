@@ -58,6 +58,5 @@ export async function handleIncomingMessage(fromNumber: string, text: string): P
 
   const toNumber = normalizeMexicanNumber(fromNumber);
 
-  await wait(randomDelayMs());
   await sendWhatsappMessage(toNumber, replyText);
 }
