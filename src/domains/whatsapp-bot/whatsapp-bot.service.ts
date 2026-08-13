@@ -39,7 +39,9 @@ export async function handleIncomingMessage(fromNumber: string, text: string): P
 
   let replyText: string;
 
-  if (trimmed === 'menu' || trimmed === 'menú' || trimmed === 'hola') {
+  const pideMenu = trimmed.includes('menu') || trimmed.includes('menú');
+
+  if (pideMenu || trimmed === 'hola') {
     replyText = MENU_TEXT;
   } else if (FIXED_RESPONSES[trimmed]) {
     replyText = FIXED_RESPONSES[trimmed];
