@@ -25,6 +25,15 @@ function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeMexicanNumber(rawNumber: string): string {
+  // WhatsApp agrega un "1" extra después del "52" en números móviles de México
+  // al recibir el mensaje, pero la API de envío lo espera sin ese dígito.
+  if (rawNumber.startsWith('521') && rawNumber.length === 13) {
+    return '52' + rawNumber.slice(3);
+  }
+  return rawNumber;
+}
+
 export async function handleIncomingMessage(fromNumber: string, text: string): Promise<void> {
   const trimmed = text.trim().toLowerCase();
 
@@ -38,6 +47,8 @@ export async function handleIncomingMessage(fromNumber: string, text: string): P
     replyText = await askOpenAI(trimmed);
   }
 
+  const toNumber = normalizeMexicanNumber(fromNumber);
+
   await wait(randomDelayMs());
-  await sendWhatsappMessage(fromNumber, replyText);
+  await sendWhatsappMessage(toNumber, replyText);
 }
